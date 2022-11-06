@@ -1,4 +1,4 @@
-The code given her consists of a single class that takes a list of words that can then be manipulated by the user:
+The code consists of a single class that takes a list of words that can then be manipulated by the user:
 1. The list can be "sanitized", that is all words are converted to lowercase, stripped of whitespace and the total length of all words combined in the array is calculated.
 2. At a specified index a word in the list can be replaced by a user-specified word. This word is, based on the length, either uppercased or lowercased and reversed.
 
