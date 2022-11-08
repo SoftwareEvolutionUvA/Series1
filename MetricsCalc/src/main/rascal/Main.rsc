@@ -20,6 +20,7 @@ list[Declaration] getASTs(loc projectLocation) {
     return asts;
 }
 
+path locationTestCode = |project://Series1/test/TestCode|;
 
 // TODO: Call measure volume
 
