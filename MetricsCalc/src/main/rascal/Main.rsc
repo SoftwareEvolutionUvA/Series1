@@ -9,6 +9,7 @@ import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
+
 void main() {
     println("Hello world");
 }
@@ -20,8 +21,7 @@ list[Declaration] getASTs(loc projectLocation) {
     return asts;
 }
 
-path locationTestCode = |project://Series1/test/TestCode|;
-
+loc locationTestCode = |project://Series1/test/TestCode|;
 // TODO: Call measure volume
 
 
