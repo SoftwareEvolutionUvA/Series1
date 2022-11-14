@@ -13,8 +13,9 @@ map[loc, int] calculateProjectLoc(loc fileLoc) {
     set[loc] cls = classes(proj);
     
     // calculate the LOCs for each class
-    void assign(c) { classLocs[c] = calculateLoc(c); }
-    mapper(cls, assign);
+    for (c <- cls) {
+        classLocs[c] = calculateLoc(c);    
+    }
 
     return classLocs;
 }
