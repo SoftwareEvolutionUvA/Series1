@@ -1,10 +1,38 @@
-module LinesOfCode
+module Metrics::Volume
 
+import lang::java::m3::Core;
 import IO;
 
+void newApproach(loc fileLoc) {
+    M3 proj = createM3FromMavenProject(fileLoc);
+    set[loc] cls = classes(proj);
+    // calculate the LOCs for each class
+    for (c <- cls) {
+        // remove whitespace and comments
+        str fContent = readFile(c);
+        a = visit(fContent) {
+            // https://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment
+            //case /^\s*$/ => "SPACE"
+            case /(?s)\/\*.*?\*\// => "" // this needs to come first. Only god knows why
+            case /\/\/.*/ => ""
+            
+            
+        }
+        a = visit(a) {
+           case /^\s*$/ => "SPACE" 
+        }
+        println(a);
 
-int countLOC() {
-    list[str] f = readFileLines(|project://Series1/MetricsCalc/src/main/rascal/testRegex.txt|);
+        //for (f <- fields()) {
+        //    println("");
+        //}
+    }
+    // don't forget fields
+    //return fields(proj);
+}
+
+int countLOC(loc fileLoc) {
+    list[str] f = readFileLines(fileLoc);
     
     int count = 0;
     bool begin = false;
@@ -32,7 +60,6 @@ int countLOC() {
             println(line);
             count += 1;
         }
-        // 
     }
 
     return count;
