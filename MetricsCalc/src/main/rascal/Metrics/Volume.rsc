@@ -12,15 +12,19 @@ map[loc, int] calculateProjectLoc(loc fileLoc) {
     set[loc] cls = classes(proj);
     // calculate the LOCs for each class
     for (c <- cls) {
-        // remove comments
-        str fileContent = readFile(c);
-        commentsRemoved = visit(fileContent) {
-            case /(?s)\/\*.*?\*\// => "" // this needs to come first. Only god knows why
-            case /\/\/.*/ => ""  
-        }
-
-        list[str] whitespaceRemoved = [s |s <- split("\n", commentsRemoved), !(/^\s*$/ := s)];
-        classLocs[c] = size(whitespaceRemoved);
+        classLocs[c] = calculateLoc(c);
     }
     return classLocs;
+}
+
+int calculateLoc(loc fileLoc) {
+    // remove comments
+    str fileContent = readFile(c);
+    commentsRemoved = visit(fileContent) {
+        case /(?s)\/\*.*?\*\// => "" // this needs to come first. Only god knows why
+        case /\/\/.*/ => ""  
+    }
+
+    list[str] whitespaceRemoved = [s |s <- split("\n", commentsRemoved), !(/^\s*$/ := s)];
+    return size(whitespaceRemoved);
 }
