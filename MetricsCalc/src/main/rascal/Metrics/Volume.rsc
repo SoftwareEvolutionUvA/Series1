@@ -10,10 +10,11 @@ map[loc, int] calculateProjectLoc(loc fileLoc) {
     map[loc, int] classLocs = ();
     M3 proj = createM3FromMavenProject(fileLoc);
     set[loc] cls = classes(proj);
+    
     // calculate the LOCs for each class
-    for (c <- cls) {
-        classLocs[c] = calculateLoc(c);
-    }
+    void assign(c) { classLocs[c] = calculateLoc(c); }
+    mapper(cls, assign);
+
     return classLocs;
 }
 
