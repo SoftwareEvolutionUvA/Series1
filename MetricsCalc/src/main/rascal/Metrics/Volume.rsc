@@ -5,6 +5,7 @@ import IO;
 import Map;
 import String;
 import List;
+import Set;
 
 map[loc, int] calculateProjectLoc(loc fileLoc) {
     map[loc, int] classLocs = ();
@@ -18,6 +19,12 @@ map[loc, int] calculateProjectLoc(loc fileLoc) {
     return classLocs;
 }
 
+/**
+* Calculates the LOC from the file location given by caller.
+* Whitespaces and comments are ignored
+* @param fileLoc location to file
+* @return LOC for fileLoc
+*/
 int calculateLoc(loc fileLoc) {
     // remove comments
     str fileContent = readFile(fileLoc);
