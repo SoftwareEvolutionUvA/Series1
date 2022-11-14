@@ -19,7 +19,7 @@ map[loc, int] calculateProjectLoc(loc fileLoc) {
 
 int calculateLoc(loc fileLoc) {
     // remove comments
-    str fileContent = readFile(c);
+    str fileContent = readFile(fileLoc);
     commentsRemoved = visit(fileContent) {
         case /(?s)\/\*.*?\*\// => "" // this needs to come first. Only god knows why
         case /\/\/.*/ => ""  
