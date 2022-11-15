@@ -9,27 +9,29 @@ import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
+import Metrics::Volume;
+import Metrics::UnitComplexity;
+import Metrics::UnitSize;
 
 void main() {
-    println("Hello world");
+    // load project and generate M3
+    loc locationTestCode = |project://Series1/test/TestCode|;
+    M3 model = createM3FromMavenProject(locationTestCode);
+    
+    // calculate Volume
+    int scoreVolume = scoreLOC(calculateProjectLOC(locationTestCode));
+    println("Volume Score is <scoreVolume>");
+
+    // calculate Complexity per Unit
+    // str scoreComplexity = complexityRank(locationTestCode)[1];
+    // println("Complexity Per Unit Score is <scoreComplexity>");
+
+    // calculate Unit Size
+    list[int] locByRiskLevel = calculateLOCMethods(model);
+    // TODO: having 2nd parameter here doesn't make sense. LOC of project can be obtained from first volume call
+    int scoreUnitSize = score(locByRiskLevel, locationTestCode);
+    println("Unit Size Score is <scoreUnitSize>");
+
+    // calculate Duplication
+    // TODO
 }
-
-// rascal function
-list[Declaration] getASTs(loc projectLocation) {
-    M3 model = createM3FromMavenProject(projectLocation);
-    list[Declaration] asts = [createAstFromFile(f, true)
-        | f <- files(model.containment), isCompilationUnit(f)];
-    return asts;
-}
-
-loc locationTestCode = |project://Series1/test/TestCode|;
-// TODO: Call measure volume
-
-
-// TODO: Call measure Unit size
-
-// TODO: Call measure Unit complexity
-
-
-// TODO: Call measure duplicates
-
