@@ -19,11 +19,11 @@ int score(list[int] linesOfCode, loc project) {
     real moderateScore = relativeLoc[1];
     
     // for now, we reuse the risk matrix from the paper for CC
-    if (moderateScore > 50.0 || highScore > 15.0 || veryHighScore > 5.0) return 0;
-    if (moderateScore > 40.0 || highScore > 10.0 || veryHighScore > 0.0) return 1;
-    if (moderateScore > 30.0 || highScore > 5.0 || veryHighScore > 0.0) return 2;
-    if (moderateScore > 25.0 || highScore > 0.0 || veryHighScore > 0.0) return 3;
-    return 4;
+    if (moderateScore > 50.0 || highScore > 15.0 || veryHighScore > 5.0) return 1;
+    if (moderateScore > 40.0 || highScore > 10.0 || veryHighScore > 0.0) return 2;
+    if (moderateScore > 30.0 || highScore > 5.0 || veryHighScore > 0.0) return 3;
+    if (moderateScore > 25.0 || highScore > 0.0 || veryHighScore > 0.0) return 4;
+    return 5;
 }
 
 list[int] calculateLOCMethods(loc fileLoc) {
