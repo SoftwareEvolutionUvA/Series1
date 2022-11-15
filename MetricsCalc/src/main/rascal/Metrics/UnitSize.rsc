@@ -2,8 +2,10 @@ module Metrics::UnitSize
 
 import Metrics::Volume;
 import lang::java::m3::Core;
+import List;
+import util::Math;
 
-int riskEvaluation(int locMethod) {
+int riskEvaluation(int linesOfCode) {
     if (linesOfCode < 10) return 3;
     if (10 <= linesOfCode && linesOfCode < 20) return 2;
     if (20 <= linesOfCode && linesOfCode < 30) return 1;
@@ -11,7 +13,7 @@ int riskEvaluation(int locMethod) {
 }
 
 int score(list[int] linesOfCode, loc project) {
-    int totalLoc = sum(range(calculateProjectLoc(project)));
+    real totalLoc = calculateProjectLOC(project);
     list[real] relativeLoc = [(toReal(absLoc) / totalLoc) * 100 | absLoc <- linesOfCode];
     
     real veryHighScore = relativeLoc[3];
@@ -26,14 +28,13 @@ int score(list[int] linesOfCode, loc project) {
     return 5;
 }
 
-list[int] calculateLOCMethods(loc fileLoc) {
+list[int] calculateLOCMethods(M3 model) {
     list[int] linesOfCode = [0, 0, 0, 0]; // risk: without much risk to very high
 
-    M3 proj = createM3FromMavenProject(fileLoc);
-    set[loc] methods = methods(proj);
+    set[loc] methods = methods(model);
 
     for (m <- methods) {
-        int locMethod = calculateLoc(m);
+        int locMethod = size(calculateLOC(m));
         int idx = riskEvaluation(locMethod);
         linesOfCode[idx] += locMethod;
     }
