@@ -6,7 +6,7 @@ import Set;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
-import module LinesOfCode;
+import LinesOfCode;
 
 
 /* 

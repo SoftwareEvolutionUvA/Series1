@@ -1,4 +1,4 @@
-module CyclomaticComplexity
+module Metrics::UnitComplexity
 
 import IO;
 import List;
@@ -6,7 +6,8 @@ import Set;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
-import module LinesOfCode;
+
+// import Metrics::Volume;
 
 
 /* 
@@ -57,59 +58,40 @@ int countConditionals(Declaration methodAST) {
     return metric;
 }
 
-
 // Function that visits the ASTs of all methods of a Java project (potentially multiple programs) 
 // and counts complexity-contributing statements per method with its risk category
-list[tuple[loc, int, str]] complexityCalc(list[Declaration] projectAST) {
+list[tuple[loc, str]] riskCalc(list[Declaration] projectAST) {
     return for (i <- [0..size(projectAST) - 1]) {
         mtd = projectAST[i];
-        append <mtd.src, countConditionals(mtd), riskCat(countConditionals(mtd))>;
+        append <mtd.src, riskCat(countConditionals(mtd))>;
     }
 }
 
-
-list[tuple[str, int]] riskPercentages(list[tuple[loc, int, str]] methods) {
-    int modLOC = 0;
-    int highLOC = 0;
-    int vhighLOC = 0;
-    visit(methods) {
-        case \methods(loc, int, "moderate risk"): modLOC += 
-
-    }
+// Temporary function for to-be-implemented LOC counter
+int countLOC(loc location) {
+    return 10;
 }
 
+list[tuple[str, int]] riskPercentages(list[tuple[loc, str]] methods, loc projectLocation) {
+    int modLOC = sum([countLOC(l) | <l, "moderate risk"> <- methods]);
+    int highLOC = sum([countLOC(l) | <l, "high risk"> <- methods]);
+    int vhighLOC = sum([countLOC(l) | <l, "very high risk"> <- methods]);
 
+    return [<"moderate", (modLOC / countLOC(projectLocation) * 100)>, <"high", (highLOC / countLOC(projectLocation) * 100)>, <"very high", (vhighLOC / countLOC(projectLoc) * 100)>];
+}
 
-// tuple[int, list[str]] mostOccurringVariable(list[Declaration] asts){
-//     map[str varName, int counts] counter = ();
-//     visit(asts){
-//         case \variable(str name, _): counter[name] ? 0 += 1;
-//         case \variable(str name, _, _): counter[name] ? 0 += 1;
-//         case \fieldAccess(_, _, str name): counter[name] ? 0 += 1;
-//         case \fieldAccess(_, str name): counter[name] ? 0 += 1;
-//         case \parameter(_, str name, _): counter[name] ? 0 += 1;
-//         case \vararg(_, str name): counter[name] ? 0 += 1;
-//     }
-//     int maximum = max(counter.counts);
-//     return <maximum, toList(invert(counter)[maximum])>;
-// }
+tuple[str, int] rankCC(list[tuple[str, int]] riskP) {
+    if (riskP[0][1] <= 25 && riskP[1][1] <= 0 && riskP[2][1] <= 0) rank = 5;
+    if (riskP[0][1] <= 30 && riskP[1][1] <= 5 && riskP[2][1] <= 0) rank = 4;
+    if (riskP[0][1] <= 40 && riskP[1][1] <= 10 && riskP[2][1] <= 0) rank = 3;
+    if (riskP[0][1] <= 50 && riskP[1][1] < 16 && riskP[2][1] <= 5) rank = 2;
+    else rank = 1;
 
+    return <"unitComplexity", rank>;
+}
 
-
-
-
-// list[loc] findNullReturned(list[Declaration] asts){
-//     list[loc] locs = [];
-//     visit(asts){
-//         case \return(Expression expr): if(expr is \null) locs += expr.src;
-//     }
-//     return locs;
-// }
-
-// int totalLOC(loc project) {
-//     return 20;
-// }
-
-// int unitLOC(loc unit) {
-//     return 5;
-// }
+// Function to calculate the ranking of Cyclomatic complexity of a Java project. 
+// Returns rank from 1-5 (--/-/o/+/++, respectively)
+tuple[str, int] complexityCalc(loc projectLocation) {
+    return rankCC(riskPercentages(riskCalc(getProjectASTs(projectLocation)), projectLocation));
+}
