@@ -12,7 +12,7 @@ int riskEvaluation(int locMethod) {
 
 int score(list[int] linesOfCode, loc project) {
     int totalLoc = sum(range(calculateProjectLoc(project)));
-    list[real] relativeLoc = [(absLoc / totalLoc) * 100 | absLoc <- linesOfCode];
+    list[real] relativeLoc = [(toReal(absLoc) / totalLoc) * 100 | absLoc <- linesOfCode];
     
     real veryHighScore = relativeLoc[3];
     real highScore = relativeLoc[2];
