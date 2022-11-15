@@ -6,8 +6,8 @@ import Set;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+import Metrics::Volume;
 
-// import Metrics::Volume;
 
 
 /* 
@@ -67,20 +67,16 @@ list[tuple[loc, str]] riskCalc(list[Declaration] projectAST) {
     }
 }
 
-// Temporary function for to-be-implemented LOC counter
-int countLOC(loc location) {
-    return 10;
+
+list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projectLocation) {
+    real modLOC = sum([calculateProjectLOC(l) | <l, "moderate risk"> <- methods]);
+    real highLOC = sum([calculateProjectLOC(l) | <l, "high risk"> <- methods]);
+    real vhighLOC = sum([calculateProjectLOC(l) | <l, "very high risk"> <- methods]);
+
+    return [<"moderate", (modLOC / calculateProjectLOC(projectLocation) * 100)>, <"high", (highLOC / calculateProjectLOC(projectLocation) * 100)>, <"very high", (vhighLOC / calculateProjectLOC(projectLoc) * 100)>];
 }
 
-list[tuple[str, int]] riskPercentages(list[tuple[loc, str]] methods, loc projectLocation) {
-    int modLOC = sum([countLOC(l) | <l, "moderate risk"> <- methods]);
-    int highLOC = sum([countLOC(l) | <l, "high risk"> <- methods]);
-    int vhighLOC = sum([countLOC(l) | <l, "very high risk"> <- methods]);
-
-    return [<"moderate", (modLOC / countLOC(projectLocation) * 100)>, <"high", (highLOC / countLOC(projectLocation) * 100)>, <"very high", (vhighLOC / countLOC(projectLoc) * 100)>];
-}
-
-tuple[str, int] rankCC(list[tuple[str, int]] riskP) {
+tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
     if (riskP[0][1] <= 25 && riskP[1][1] <= 0 && riskP[2][1] <= 0) rank = 5;
     if (riskP[0][1] <= 30 && riskP[1][1] <= 5 && riskP[2][1] <= 0) rank = 4;
     if (riskP[0][1] <= 40 && riskP[1][1] <= 10 && riskP[2][1] <= 0) rank = 3;
@@ -92,6 +88,6 @@ tuple[str, int] rankCC(list[tuple[str, int]] riskP) {
 
 // Function to calculate the ranking of Cyclomatic complexity of a Java project. 
 // Returns rank from 1-5 (--/-/o/+/++, respectively)
-tuple[str, int] complexityCalc(loc projectLocation) {
+tuple[str, int] complexityRank(loc projectLocation) {
     return rankCC(riskPercentages(riskCalc(getProjectASTs(projectLocation)), projectLocation));
 }
