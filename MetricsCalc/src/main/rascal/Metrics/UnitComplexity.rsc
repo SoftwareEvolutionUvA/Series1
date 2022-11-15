@@ -73,7 +73,12 @@ list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projec
     real highLOC = sum([calculateProjectLOC(l) | <l, "high risk"> <- methods]);
     real vhighLOC = sum([calculateProjectLOC(l) | <l, "very high risk"> <- methods]);
 
-    return [<"moderate", (modLOC / calculateProjectLOC(projectLocation) * 100)>, <"high", (highLOC / calculateProjectLOC(projectLocation) * 100)>, <"very high", (vhighLOC / calculateProjectLOC(projectLoc) * 100)>];
+    real projectLoc = calculateProjectLOC(projectLocation);
+    return [
+        <"moderate", (modLOC / projectLoc * 100)>,
+        <"high", (highLOC / projectLoc * 100)>,
+        <"very high", (vhighLOC / projectLoc * 100)>
+        ];
 }
 
 tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
