@@ -78,11 +78,11 @@ public real calculateProjectLOC(loc projectLoc) {
 map[loc, list[str]] getProjectLOC(loc projectLoc) {
     map[loc, list[str]] classLines = ();
     M3 project = createM3FromMavenProject(projectLoc);
-    set[loc] cls = classes(project);
+    set[loc] cls = classes(project); // TODO: Compilation units also count! (of comprehension schrijven oid)
     
     // Obtain the lines for each class
     for (c <- cls) {
-        classLines[c] = calculateLOC(c);    
+        classLines[c] = getLines(c);    
     }
 
     return classLines;
@@ -94,7 +94,7 @@ map[loc, list[str]] getProjectLOC(loc projectLoc) {
 * @param fileLoc location to file
 * @return lines for fileLoc
 */
-list[str] calculateLOC(loc fileLoc) {
+list[str] getLines(loc fileLoc) {
     // remove comments
     str fileContent = readFile(fileLoc);
     commentsRemoved = visit(fileContent) {
@@ -128,7 +128,7 @@ int scoreLOC(real linesOfCode) {
 * @param projectLoc location to project location containing files
 * @return list of all lines of project
 */
-list[str] getLines(loc projectLoc) {
+list[str] getAllLines(loc projectLoc) {
     lines = getProjectLOC(projectLoc);
     return ([] | it + t[1] | t <- toList(lines));
 }
