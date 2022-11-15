@@ -91,3 +91,20 @@ list[str] getAllLines(loc projectLoc) {
 int volumeRank(loc projectLoc) {
     return scoreLOC(calculateProjectLOC(projectLoc));
 }
+
+/**
+* Return the lines of all compilation units in a Maven project.
+* Provide path to Maven project.
+* Returns map where key is location of compilation unit and value is a list with all lines from that unit
+* without lines with whitespace or comments.
+*/
+map[loc, list[str]] locsCompilationUnits(loc projectLocation) {
+    M3 model = createM3FromMavenProject(projectLocation);
+    list[loc] compilationUnits = [f | f <- files(model.containment), isCompilationUnit(f)];
+
+    map[loc, list[str]] compilationUnitsLocs = ();
+    for (unit <- compilationUnits) {
+        compilationUnitsLocs[unit] = getLines(unit);
+    }
+    return compilationUnitsLocs;
+}
