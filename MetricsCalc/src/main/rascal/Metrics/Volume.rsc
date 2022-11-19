@@ -14,9 +14,9 @@ import util::Math;
 * @param projectLoc location to project location containing files
 * @return LOC for the project location
 */
-public real calculateProjectLOC(loc projectLoc) {
+public int calculateProjectLOC(loc projectLoc) {
     map[loc, list[str]] lines = getProjectLOC(projectLoc);
-    return (0 | it + toReal(size(t[1])) | t <- toList(lines));
+    return (0 | it + size(t[1]) | t <- toList(lines));
 }
 
 /**
@@ -48,7 +48,10 @@ list[str] getLines(loc fileLoc) {
     str fileContent = readFile(fileLoc);
     commentsRemoved = visit(fileContent) {
         case /(?s)\/\*.*?\*\// => "" // this needs to come first. Only god knows why
-        case /\/\/.*/ => ""  
+    }
+
+    commentsRemoved = visit(commentsRemoved) {
+        case /\/\/.*/ => ""
     }
 
     list[str] whitespaceRemoved = [s |s <- split("\n", commentsRemoved), !(/^\s*$/ := s)];
@@ -61,12 +64,12 @@ list[str] getLines(loc fileLoc) {
 * @param total linesOfCode
 * @return 1-based rank for Volume (1 = --, 5 = ++)
 */
-int scoreLOC(real linesOfCode) {
-    linesOfCode /= 1000.0;
-    if (0 <= linesOfCode && linesOfCode < 66) return 5;
-    if (66 <= linesOfCode && linesOfCode < 246) return 4;
-    if (246 <= linesOfCode && linesOfCode < 665) return 3;
-    if (655 <= linesOfCode && linesOfCode < 1310) return 2;
+int scoreLOC(int linesOfCode) {
+    real kLinesOfCode = linesOfCode / 1000.0;
+    if (0 <= kLinesOfCode && kLinesOfCode < 66) return 5;
+    if (66 <= kLinesOfCode && kLinesOfCode < 246) return 4;
+    if (246 <= kLinesOfCode && kLinesOfCode < 665) return 3;
+    if (665 <= kLinesOfCode && kLinesOfCode < 1310) return 2;
     return 1;
 }
 
