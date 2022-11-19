@@ -7,9 +7,7 @@ import List;
 import Metrics::Volume;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
-import List;
 import Set;
-import IO;
 import util::Math;
 
 // Note: Duplicates result should be between 1000-4000
