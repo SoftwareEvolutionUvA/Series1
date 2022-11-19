@@ -1,66 +1,65 @@
-module Duplication
+module Metrics::Duplication
 
-import Map;
-import String;
 import List;
-import String;
 import Metrics::Volume;
-
+import List;
+import Set;
+import IO;
+import util::Math;
 
 // Note: Duplicates result should be between 1000-4000
 
+/**
+* Calculates the total number of duplicate LOC for a single class.
+* The index is determines the granularity of a clone.
+* @param filename location to the class to check for clones
+* @param index index file with all blocks of code in project. @see createCloneIndex.
+* @return number of duplicate LOC for the given class
+*/
+int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, value]] index) {
+    // construct f
+    list[tuple[loc, int, str, value]] f = [<fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, fName == filename];
+    f = sort(f, bool (tuple[loc, int, str, value] a, tuple[loc, int, str, value] b){return a[1] < b[1];});
 
-// TODO: Get compilation-unit locations! 
-// Adapt get function that gets lines per compilation unit, and calls getFrames with those lines.
-// Assume in this function that all locs are from the compilation-unit the frame is in. 
+    set[int] duplicates = {};
+
+    // define set with indices
+    list[set[tuple[loc, int, str, value]]] c = [];
+    c += {};
+    for (elem <- f){
+        sameHash = { <fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, hash == elem[2] };
+        // there is a duplicate somewhere
+        if (size(sameHash) > 1) {
+            duplicates += elem[3]; // we assume info to be a set of all indices the block has
+        }
+    }
+
+    return size(duplicates); // TODO: check that here I don't include the emtpy set
+}
 
 /**
-* Function to obtain all the initial 6-line frames of all files of a project.
-* Using tuple with location of file (for same line-nrs in different files), and range (so line-nrs of the checked frame)
+* Calculates the absolute number of duplicate LOC.
+* @param project location to a Maven project.
+* @return absolute number of duplicate LOC in project.
 */
-map[list[str], tuple[loc, list[int]]] getFrames(loc projectLoc) {
-    map[loc, list[str]] projectLines = getProjectLOC(projectLoc);
+int absoluteDuplicateLinesProject(loc project) {
+    // TODO: change return such that there is a list of locations as well
+    list[tuple[loc, int, str, value]] index = createCloneIndex(project);
+    list[loc] classes = []; // TODO: change this to return of createCloneIndex
 
-    map[list[str], tuple[loc, list[int]]] frames = ();
-    list[str] frame = [];
-    // loc unitLoc = ();
-    int index = 0;
-
-    // Note: p = one loc with a list of its [lines]
-    for (p <- projectLines) {
-        index += 1;
-        unitLoc = p[0]; // TODO: how to save a location of a frame if you cannot subscript...
-        unitLines = p(unitLoc);
-        frame = slice(unitLines, index, 6); // IDK why it can't find lice. It is in import List (https://www.rascal-mpl.org/docs/Library/List/#List-slice)
-        frames[frame] = <unitLoc, [index..6]>;
+    int totalDuplicatedLines = 0;
+    for (c <- classes) {
+        totalDuplicatedLines += duplicateLinesSingleClass(c, index);
     }
-    return frames;
+    return totalDuplicatedLines;
 }
 
-
-tuple[list[str], list[tuple[loc, list[int]]]] findClones(map[list[str] curFrames, tuple[loc unit, list[int] range]] frames) {
-        tuple[ list[str], list[ tuple[loc, list[int]] ] ] clones = [];
-        
-        // In "frames" hash-map, find the "curFrames"-keys that contain multiple entries (tuples). 
-        // Add the key-frames to clones. Add the list of all its <location, range (which are the line nrs)> tuples
-        // to clones as well.    
-        // E.g.:    addClone(frames, [unitLoc, frame]);
-
-        // Note: following is just to remove "missing return"-error.
-        loc are_we = ();
-        loc done_yet = ();
-        list[tuple[loc, list[int]]] my_head_hurts = [<are_we, [18,04]>, <done_yet, [19,98]>];
-
-        clones = <["this language is something else"],my_head_hurts>;
-        return clones; 
+/**
+* Calculates the number of duplicate LOC relative to the LOC of the project.
+* @param project location to a Maven project.
+* @param projectLoc absolute number of LOC for the entire project.
+* @return relative number of LOC in project. Return is in [0,1].
+*/
+real realtiveDuplicateLinesProject(loc project, int projectLoc) {
+    return absoluteDuplicateLinesProject(project) / toReal(projectLoc);
 }
-
-
-// TODO: After this, we can start extending each 6-line frame, i.e. a "clone class", with a line (using 
-// the location to find the line-nr frame) of each location in the clone class. 
-// Then, compare the extended clone class with the previous clone class. If extended clone class contains only 1 tuple, 
-// stop. 
-// If extended iss completely similar, keep extended only. Otherwise, keep both in "clones". 
-// Do the same again.
-//
-// If all frames are checked --> count ALL tuples in each class (so each list[str]). These are the duplicates.
