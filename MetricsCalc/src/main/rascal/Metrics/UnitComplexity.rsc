@@ -29,6 +29,7 @@ list[Declaration] getProjectASTs(loc projectLocation) {
         | f <- files(model.containment), isMethod(f)];
     return methodASTs;
 }
+// TODO: Could also leave isCompilationUnit instead of isMethod, and filter methods using visit. 
 
 // Function returning the risk category based on the CC of a method
 str riskCat(int cc) {
@@ -94,5 +95,6 @@ tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
 // Function to calculate the ranking of Cyclomatic complexity of a Java project. 
 // Returns rank from 1-5 (--/-/o/+/++, respectively)
 tuple[str, int] complexityRank(loc projectLocation) {
-    return rankCC(riskPercentages(riskCalc(getProjectASTs(projectLocation)), projectLocation));
+    return rankCC(riskPercentages(riskCalc(getProjectASTs(projectLocation)), projectLocation)); 
+    //TODO: riskCalc is called with an empty list. This means that getProjectASTs (probably isMethod) does not work properly.
 }
