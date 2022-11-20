@@ -25,9 +25,9 @@ import Scores::Maintainability;
 
 
 void main() {
-    loc testProjectLocation = |project://Series1/test/TestCode|;
+    //loc testProjectLocation = |project://Series1/test/TestCode|;
     str applicationName = "TestCode";
-    //loc testProjectLocation = |project://smallsql0.21_src|;
+    loc testProjectLocation = |project://smallsql0.21_src|;
     //loc testProjectLocation = |project://hsqldb-2.3.1|;
     map[str, int] metrics = ();
     map[str, int] scores = ();

@@ -14,7 +14,6 @@ test bool testCalculateProjectLOC() {
 test bool testGetLines() {
     loc testFile = |project://Series1/MetricsCalc/src/main/rascal/Metrics/Test/testRegex.txt|;
     list[str] lines = getLines(testFile);
-    //println(lines);
     return size(lines) == 6;
 }
 

@@ -1,6 +1,7 @@
 module Metrics::Test::UnitComplexity
 
 import Metrics::UnitComplexity;
+import Metrics::Volume;
 
 import IO;
 import List;
@@ -63,8 +64,9 @@ test bool testRiskCalc() {
 test bool testRiskPercentages() {
     loc testProjectLocation = |project://Series1/test/TestCode|;
     list[Declaration] decls = getMethodASTsProject(testProjectLocation);
+    int locProj = calculateProjectLOC(testProjectLocation);
 
-    return riskPercentages(riskCalc(decls), testProjectLocation) == [<"moderate", 0.>, <"high", 0.>, <"very high", 0.>];
+    return riskPercentages(riskCalc(decls), locProj) == [<"moderate", 0.>, <"high", 0.>, <"very high", 0.>];
 }
 
 test bool testRankCC1() {
@@ -94,5 +96,6 @@ test bool testRankCC5() {
 
 test bool testComplexityRank() {
     loc testProjectLocation = |project://Series1/test/TestCode|;
-    return complexityRank(testProjectLocation) == 5;
+    int locProj = calculateProjectLOC(testProjectLocation);
+    return complexityRank(testProjectLocation, locProj) == 5;
 }

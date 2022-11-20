@@ -92,10 +92,6 @@ list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, int projec
         ];
 }
 
-list[tuple[str, real]] riskAbsolute() {
-    
-}
-
 int rankCC(list[tuple[str, real]] riskP) {
     real veryHighScore = riskP[2][1];
     real highScore = riskP[1][1];
