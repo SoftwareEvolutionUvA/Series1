@@ -1,13 +1,15 @@
 module Metrics::UnitComplexity
 
-import IO;
-import List;
-import Set;
-import String;
-import lang::java::m3::Core;
-import lang::java::m3::AST;
 import Metrics::Volume;
 
+import IO;
+import List;
+import Map;
+import Set;
+import String;
+import util::Math;
+import lang::java::m3::Core;
+import lang::java::m3::AST;
 
 
 /* 
@@ -25,11 +27,13 @@ The latter method is implemented below.
 // Function that returns the list of ASTs of each method in a given project
 list[Declaration] getProjectASTs(loc projectLocation) {
     M3 model = createM3FromMavenProject(projectLocation);
+
     list[Declaration] methodASTs = [createAstFromFile(f, true)
-        | f <- files(model.containment), isMethod(f)];
-    return methodASTs;
+        | f <- files(model.containment), isCompilationUnit(f)];
+
+    // return methodASTs;
+    return [ m | /Declaration m := methodASTs, m is method]; // Also returns methodCalls(), but I think that is ok.
 }
-// TODO: Could also leave isCompilationUnit instead of isMethod, and filter methods using visit. 
 
 // Function returning the risk category based on the CC of a method
 str riskCat(int cc) {
@@ -68,13 +72,13 @@ list[tuple[loc, str]] riskCalc(list[Declaration] projectAST) {
     }
 }
 
-
 list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projectLocation) {
     real modLOC = sum([calculateProjectLOC(l) | <l, "moderate risk"> <- methods]);
     real highLOC = sum([calculateProjectLOC(l) | <l, "high risk"> <- methods]);
     real vhighLOC = sum([calculateProjectLOC(l) | <l, "very high risk"> <- methods]);
 
     real projectLoc = calculateProjectLOC(projectLocation);
+
     return [
         <"moderate", (modLOC / projectLoc * 100)>,
         <"high", (highLOC / projectLoc * 100)>,
@@ -95,6 +99,10 @@ tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
 // Function to calculate the ranking of Cyclomatic complexity of a Java project. 
 // Returns rank from 1-5 (--/-/o/+/++, respectively)
 tuple[str, int] complexityRank(loc projectLocation) {
-    return rankCC(riskPercentages(riskCalc(getProjectASTs(projectLocation)), projectLocation)); 
+    list[Declaration] projectAST = getProjectASTs(projectLocation);
+    list[tuple[loc, str]] risks = riskCalc(projectAST);
+    list[tuple[str, real]] riskPerc = riskPercentages(risks, projectLocation);
+
+    return rankCC(riskPerc); 
     //TODO: riskCalc is called with an empty list. This means that getProjectASTs (probably isMethod) does not work properly.
 }

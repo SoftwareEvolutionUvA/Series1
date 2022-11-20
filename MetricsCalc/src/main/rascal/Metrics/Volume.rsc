@@ -1,12 +1,13 @@
 module Metrics::Volume
 
-import lang::java::m3::Core;
 import IO;
-import Map;
-import String;
 import List;
+import Map;
 import Set;
+import String;
 import util::Math;
+import lang::java::m3::Core;
+import lang::java::m3::AST;
 
 /**
 * Calculates the LOC from the project location given by caller.
@@ -75,7 +76,7 @@ int volumeRank(loc projectLoc) {
 * Returns map where key is location of compilation unit and value is a list with all lines from that unit
 * without lines with whitespace or comments.
 */
-map[loc, list[str]] locsCompilationUnits(loc projectLocation) {
+public map[loc, list[str]] locsCompilationUnits(loc projectLocation) {
     M3 model = createM3FromMavenProject(projectLocation);
     list[loc] compilationUnits = [f | f <- files(model.containment), isCompilationUnit(f)];
 

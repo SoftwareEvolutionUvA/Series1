@@ -14,7 +14,7 @@ import util::Math;
 
 /**
 * Calculates the total number of duplicate LOC for a single class.
-* The index is determines the granularity of a clone.
+* The index determines the granularity of a clone.
 * @param filename location to the class to check for clones
 * @param index index file with all blocks of code in project. @see createCloneIndex.
 * @return number of duplicate LOC for the given class
@@ -62,20 +62,20 @@ tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, i
         lookupFileName[file] = [];
         list[str] lines = project[file];
 
-        // files with less than "blocksize" LOC will result in negative upper bound in for loop below
+        // files with less than "blocksize" LOC will result in negative upper bound in for-loop below
         // this is why we skip them (they also don't fit our definition of duplicate)
         if (size(lines) < blockSize) {
             continue;
         }
 
-        for (i <- [0..(size(lines)-blockSize+1)]) {
+        for (i <- [0..(size(lines)-blockSize+1)]) { 
             sequence = lines[i..(i+blockSize)];
             hash = md5Hash(sequence);
             info = {idx | idx <- [i .. (i+blockSize)]};
             tuple[loc, int, str, set[int]] indexTuple = <file, i, hash, info>;
             lookupFileName[file] += indexTuple;
             if (hash in lookupHash) {
-                lookupHash[hash] += indexTuple;
+                lookupHash[hash] += indexTuple; // is this an "add collision"?
             }
             else {
                 lookupHash[hash] = [indexTuple];
