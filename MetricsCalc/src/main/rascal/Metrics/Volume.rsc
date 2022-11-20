@@ -54,7 +54,7 @@ list[str] getLines(loc fileLoc) {
         case /\/\/.*/ => ""
     }
 
-    list[str] whitespaceRemoved = [s |s <- split("\n", commentsRemoved), !(/^\s*$/ := s)];
+    list[str] whitespaceRemoved = [trim(s) |s <- split("\n", commentsRemoved), !(/^\s*$/ := s)];
     return whitespaceRemoved;
 }
 
