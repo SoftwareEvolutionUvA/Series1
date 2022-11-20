@@ -11,7 +11,7 @@ import java.util.Collections;
  * LOC per method: see methods
  * Cyclomatic complexity (CC): see methods
  *  used https://app.code2flow.com/ to generate the CFGs
- * Duplication: 11/48 = 22.91%
+ * Duplication: 22/48 = 45.83%
  */
 public class SomeClass {
     private ArrayList<String> arr;
