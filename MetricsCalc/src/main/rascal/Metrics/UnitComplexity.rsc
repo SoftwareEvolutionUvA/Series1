@@ -93,7 +93,7 @@ list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projec
         ];
 }
 
-tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
+int rankCC(list[tuple[str, real]] riskP) {
     int rank = -1;
     if (riskP[0][1] <= 25 && riskP[1][1] <= 0 && riskP[2][1] <= 0) rank = 5;
     if (riskP[0][1] <= 30 && riskP[1][1] <= 5 && riskP[2][1] <= 0) rank = 4;
@@ -101,12 +101,12 @@ tuple[str, int] rankCC(list[tuple[str, real]] riskP) {
     if (riskP[0][1] <= 50 && riskP[1][1] < 16 && riskP[2][1] <= 5) rank = 2;
     else rank = 1;
 
-    return <"unitComplexity", rank>;
+    return rank;
 }
 
 // Function to calculate the ranking of Cyclomatic complexity of a Java project. 
 // Returns rank from 1-5 (--/-/o/+/++, respectively)
-tuple[str, int] complexityRank(loc projectLocation) {
+int complexityRank(loc projectLocation) {
     list[Declaration] projectAST = getMethodASTsProject(projectLocation);
     list[tuple[loc, str]] risks = riskCalc(projectAST);
     list[tuple[str, real]] riskPerc = riskPercentages(risks, projectLocation);

@@ -4,10 +4,10 @@ import IO;
 import Map;
 import String;
 import List;
+import Set;
 import Metrics::Volume;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
-import Set;
 import util::Math;
 
 // Note: Duplicates result should be between 1000-4000
@@ -47,8 +47,8 @@ int duplicateLinesSingleClass(list[tuple[loc, int, str, set[int]]] blocksFile, m
 * - Info (range, i.e., line-nrs of the checked frame)
 * with n as minimum nr of lines for a clone. 
 */
-tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] createCloneIndex(loc projectLoc) {
-    map[loc, list[str]] project = locsCompilationUnits(projectLoc);
+tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] createCloneIndex(loc projectLOC) {
+    map[loc, list[str]] project = locsCompilationUnits(projectLOC);
     int blockSize = 6;
     set[loc] files = domain(project);
 
@@ -91,8 +91,8 @@ tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, i
 * @param project location to a Maven project.
 * @return absolute number of duplicate LOC in project.
 */
-int absoluteDuplicateLinesProject(loc project) {
-    tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] ret = createCloneIndex(project);
+int absoluteDuplicateLines(loc projectLocation) {
+    tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] ret = createCloneIndex(projectLocation);
     map[str, list[tuple[loc, int, str, set[int]]]] lookupHash = ret[0];
     map[loc, list[tuple[loc, int, str, set[int]]]] lookupFileName = ret[1];
     set[loc] classes = ret[2];
@@ -107,11 +107,11 @@ int absoluteDuplicateLinesProject(loc project) {
 /**
 * Calculates the number of duplicate LOC relative to the LOC of the project.
 * @param project location to a Maven project.
-* @param projectLoc absolute number of LOC for the entire project.
+* @param projectLOC absolute number of LOC for the entire project.
 * @return relative number of LOC in project. Return is in [0,100].
 */
-real realtiveDuplicateLinesProject(loc project, int projectLoc) {
-    return absoluteDuplicateLinesProject(project) / toReal(projectLoc) * 100;
+real relativeDuplicateLines(loc projectLocation, int projectLOC) {
+    return absoluteDuplicateLines(projectLocation) / toReal(projectLOC) * 100;
 }
 
 /**
@@ -125,4 +125,8 @@ int scoreDuplicates(real relativeDuplication) {
     if (5 <= relativeDuplication && relativeDuplication < 10) return 3;
     if (10 <= relativeDuplication && relativeDuplication < 20) return 2;
     return 1;
+}
+
+int duplicationRank(loc projectLocation) {
+    return scoreDuplicates(relativeDuplicateLines(projectLocation, absoluteDuplicateLines(projectLocation)));
 }

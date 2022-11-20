@@ -17,37 +17,38 @@ import Metrics::Duplication;
 
 void main() {
     // load project and generate M3
-    loc locationTestCode = |project://Series1/test/TestCode|;
-    //loc locationTestCode = |project://smallsql0.21_src|;
-    //loc locationTestCode = |project://hsqldb-2.3.1|;
-    M3 model = createM3FromMavenProject(locationTestCode);
-    
-    // calculate Volume
-    datetime begin = now();
-    int locProject = calculateProjectLOC(locationTestCode);
-    int scoreVolume = scoreLOC(locProject);
-    datetime end = now();
-    println("Volume done in <createDuration(begin, end)>");
-    println("Volume Score is <scoreVolume>");
+    // loc testProjectLocation = |project://Series1/test/TestCode|;
+    loc testProjectLocation = |project://smallsql0.21_src|;
+    //loc testProjectLocation = |project://hsqldb-2.3.1|;
 
-    // calculate Complexity per Unit
-    str scoreComplexity = complexityRank(locationTestCode)[1];
-    println("Complexity Per Unit Score is <scoreComplexity>");
+    // Metric 1: Volume rank
+    datetime begin1 = now();
+    int volumeRanking = volumeRank(testProjectLocation);
+    datetime end1 = now();
+    println("Volume ranking is <volumeRanking>");
+    println("Volume rank calculation done in <createDuration(begin1, end1)>");
 
-    // calculate Unit Size
-    // begin = now();
-    // list[int] locByRiskLevel = calculateLOCMethods(model);
-    // // TODO: having 2nd parameter here doesn't make sense. LOC of project can be obtained from first volume call
-    // int scoreUnitSize = score(locByRiskLevel, locProject);
-    // end = now();
-    // println("Unit Size done in <createDuration(begin, end)>");
-    // println("Unit Size Score is <scoreUnitSize>");
+    // Metric 2: Unit Size rank
+    datetime begin2 = now();
+    int USizeRanking = unitSizeRank(testProjectLocation);
+    datetime end2 = now();
+    println("Unit Size ranking is <volumeRanking>");
+    println("Unit Size rank calculation done in <createDuration(begin2, end2)>");
 
-    // calculate Duplication
-    begin = now();
-    real dupLines = realtiveDuplicateLinesProject(locationTestCode, locProject);
-    println(dupLines);
-    end = now();
-    println("Duplication done in <createDuration(begin, end)>");
-    println("Duplication Score is <scoreDuplicates(dupLines)>");
+    // Metric 3: Unit Complexity rank
+    datetime begin3 = now();
+    int CCRanking = complexityRank(testProjectLocation);
+    datetime end3 = now();
+    println("Unit Complexity ranking is <CCRanking>");
+    println("Unit Compexity rank calculation done in <createDuration(begin3, end3)>");    
+
+    // Metric 4: Duplication rank
+    datetime begin4 = now();
+    int dupRank = duplicationRank(testProjectLocation);
+    datetime end4 = now();
+    println("Duplication ranking is <dupRank>");
+    println("Duplication rank calculation done in <createDuration(begin4, end4)>");
+
+    //TODO: Maintainability score calculations called below.
+
 }
