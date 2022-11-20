@@ -10,6 +10,7 @@ import String;
 import util::Math;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+import Exception;
 
 
 /* 
@@ -37,11 +38,11 @@ list[Declaration] getMethodASTsProject(loc projectLocation) {
 
 // Function returning the risk category based on the CC of a method
 str riskCat(int cc) {
-    if (cc < 11) return ("low risk");
-    if (cc > 10 && cc < 21) return ("moderate risk");
-    if (cc > 20 && cc < 51) return ("high risk");
-    if (cc > 50) return ("very high risk");
-    else return ("error");
+    if (cc < 1) return "CC cannot be smaller than 1 (was <cc>)";
+    if (cc <= 10) return "low risk";
+    if (cc <= 20) return "moderate risk";
+    if (cc <= 50) return "high risk";
+    return "very high risk";
 }
 
 int countConditionals(Declaration methodAST) {
@@ -94,14 +95,15 @@ list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projec
 }
 
 int rankCC(list[tuple[str, real]] riskP) {
-    int rank = -1;
-    if (riskP[0][1] <= 25 && riskP[1][1] <= 0 && riskP[2][1] <= 0) rank = 5;
-    if (riskP[0][1] <= 30 && riskP[1][1] <= 5 && riskP[2][1] <= 0) rank = 4;
-    if (riskP[0][1] <= 40 && riskP[1][1] <= 10 && riskP[2][1] <= 0) rank = 3;
-    if (riskP[0][1] <= 50 && riskP[1][1] < 16 && riskP[2][1] <= 5) rank = 2;
-    else rank = 1;
+    real veryHighScore = riskP[2][1];
+    real highScore = riskP[1][1];
+    real moderateScore = riskP[0][1];
 
-    return rank;
+    if (moderateScore > 50.0 || highScore > 15.0 || veryHighScore > 5.0) return 1;
+    if (moderateScore > 40.0 || highScore > 10.0 || veryHighScore > 0.0) return 2;
+    if (moderateScore > 30.0 || highScore > 5.0 || veryHighScore > 0.0) return 3;
+    if (moderateScore > 25.0 || highScore > 0.0 || veryHighScore > 0.0) return 4;
+    return 5;
 }
 
 // Function to calculate the ranking of Cyclomatic complexity of a Java project. 
