@@ -68,13 +68,12 @@ tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, i
             continue;
         }
 
-        for (i <- [0..(size(lines)-blockSize)]) {
+        for (i <- [0..(size(lines)-blockSize+1)]) {
             sequence = lines[i..(i+blockSize)];
             hash = md5Hash(sequence);
-            info = {idx | idx <- [i.. (i+blockSize)]};
+            info = {idx | idx <- [i .. (i+blockSize)]};
             tuple[loc, int, str, set[int]] indexTuple = <file, i, hash, info>;
             lookupFileName[file] += indexTuple;
-            
             if (hash in lookupHash) {
                 lookupHash[hash] += indexTuple;
             }
@@ -109,10 +108,10 @@ int absoluteDuplicateLinesProject(loc project) {
 * Calculates the number of duplicate LOC relative to the LOC of the project.
 * @param project location to a Maven project.
 * @param projectLoc absolute number of LOC for the entire project.
-* @return relative number of LOC in project. Return is in [0,1].
+* @return relative number of LOC in project. Return is in [0,100].
 */
 real realtiveDuplicateLinesProject(loc project, int projectLoc) {
-    return absoluteDuplicateLinesProject(project) / toReal(projectLoc);
+    return absoluteDuplicateLinesProject(project) / toReal(projectLoc) * 100;
 }
 
 /**
