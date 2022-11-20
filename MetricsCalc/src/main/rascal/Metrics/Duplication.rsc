@@ -104,7 +104,12 @@ int absoluteDuplicateLines(loc projectLocation) {
     return totalDuplicatedLines;
 }
 
-/**low risk
+/**
+* Calculates the number of duplicate LOC relative to the LOC of the project.
+* @param project location to a Maven project.
+* @param projectLOC absolute number of LOC for the entire project.
+* @return relative number of LOC in project. Return is in [0,100].
+*/
 real relativeDuplicateLines(loc projectLocation, int projectLOC) {
     return absoluteDuplicateLines(projectLocation) / toReal(projectLOC) * 100;
 }
