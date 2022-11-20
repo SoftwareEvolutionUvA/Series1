@@ -22,13 +22,11 @@ import util::Math;
 int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, set[int]]] index) {
     // construct f
     list[tuple[loc, int, str, set[int]]] f = [<fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, fName == filename];
-    f = sort(f, bool (tuple[loc, int, str, set[int]] a, tuple[loc, int, str, set[int]] b){return a[1] < b[1];});
 
     set[int] duplicates = {};
 
     // define set with indices
     list[set[tuple[loc, int, str, set[int]]]] c = [];
-    c += {};
     for (elem <- f){
         sameHash = { <fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, hash == elem[2] };
         // there is a duplicate somewhere
@@ -37,7 +35,7 @@ int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, set[int]]]
         }
     }
 
-    return size(duplicates); // TODO: check that here I don't include the emtpy set
+    return size(duplicates);
 }
 
 /**
@@ -48,24 +46,24 @@ int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, set[int]]]
 * - Info (range, i.e., line-nrs of the checked frame)
 * with n as minimum nr of lines for a clone. 
 */
-list[tuple[loc, int, str, set[int]]] createCloneIndex(loc projectLoc) {
+tuple[list[tuple[loc, int, str, set[int]]], set[loc]] createCloneIndex(loc projectLoc) {
     map[loc, list[str]] project = getProjectLOC(projectLoc);
-    list[tuple[loc, list[str]]] projectLines = toList(project);
     list[tuple[loc, int, str, set[int]]] cloneIndex = [];
 
     int blockSize = 6;
-    for (file <- projectLines) {
-        int index = 0;
-        lines = file[1];
+    set[loc] files = domain(project);
+    for (file <- files) {
+        list[str] lines = project[file];
 
-        for (i <- [index..(size(lines)-blockSize)]) {
+        for (i <- [0..(size(lines)-blockSize)]) {
             sequence = lines[i..(i+blockSize)];
             hash = md5Hash(sequence);
             info = {idx | idx <- [i.. (i+blockSize)]};
-            cloneIndex += append <file, index, hash, info>;
+            cloneIndex += <file, i, hash, info>;
         }
     }
-    return cloneIndex;
+
+    return <cloneIndex, files>;
 }
 
 /**
@@ -74,9 +72,9 @@ list[tuple[loc, int, str, set[int]]] createCloneIndex(loc projectLoc) {
 * @return absolute number of duplicate LOC in project.
 */
 int absoluteDuplicateLinesProject(loc project) {
-    // TODO: change return such that there is a list of locations as well
-    list[tuple[loc, int, str, set[int]]] index = createCloneIndex(project);
-    list[loc] classes = []; // TODO: change this to return of createCloneIndex
+    tuple[list[tuple[loc, int, str, set[int]]], set[loc]] ret = createCloneIndex(project);
+    list[tuple[loc, int, str, set[int]]] index = ret[0];
+    set[loc] classes = ret[1];
 
     int totalDuplicatedLines = 0;
     for (c <- classes) {
