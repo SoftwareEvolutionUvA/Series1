@@ -18,8 +18,7 @@ int calculate_analysability(map[str, int] metrics, map[str, real] weights) {
     final_score += weights["volume"] * metrics["volume"];
     final_score += weights["unitSize"] * metrics["unitSize"];
     final_score += weights["duplication"] * metrics["duplication"];
-
-    return floor(final_score/3.0);
+    return floor(final_score);
 }
 
 int calculate_analysability(map[str, int] metrics) {

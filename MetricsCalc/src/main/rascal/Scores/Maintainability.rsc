@@ -19,7 +19,7 @@ int calculate_maintainability(map[str, int] scores, map[str, real] weights) {
     final_score += weights["changeability"] * scores["changeability"];
     final_score += weights["testability"] * scores["testability"];
 
-    return floor(final_score/3.0);
+    return floor(final_score);
 }
 
 int calculate_maintainability(map[str, int] scores) {

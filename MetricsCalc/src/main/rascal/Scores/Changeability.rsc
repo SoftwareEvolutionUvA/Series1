@@ -18,7 +18,7 @@ int calculate_changeability(map[str, int] metrics, map[str, real] weights) {
     final_score += weights["unitComplexity"] * metrics["unitComplexity"];
     final_score += weights["duplication"] * metrics["duplication"];
 
-    return floor(final_score/2.0);
+    return floor(final_score);
 }
 
 int calculate_changeability(map[str, int] metrics) {

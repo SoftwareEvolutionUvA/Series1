@@ -27,5 +27,5 @@ int calculate_testability(map[str, int] metrics, map[str, real] weights) {
     final_score += weights["unitComplexity"] * metrics["unitComplexity"];
     final_score += weights["unitSize"] * metrics["unitSize"];
 
-    return floor(final_score/2.0);
+    return floor(final_score);
 }

@@ -24,55 +24,59 @@ import Scores::Maintainability;
 
 
 void main() {
-    // loc testProjectLocation = |project://Series1/test/TestCode|;
-    loc testProjectLocation = |project://smallsql0.21_src|;
+    loc testProjectLocation = |project://Series1/test/TestCode|;
+    str applicationName = "TestCode";
+    //loc testProjectLocation = |project://smallsql0.21_src|;
     //loc testProjectLocation = |project://hsqldb-2.3.1|;
     map[str, int] metrics = ();
     map[str, int] scores = ();
 
     // Metric 1: Volume rank
     datetime begin1 = now();
-    metrics += ("volume" : volumeRank(testProjectLocation));
+    metrics["volume"] = volumeRank(testProjectLocation);
     datetime end1 = now();
     println("Volume rank: <metrics["volume"]>");
-    println("Volume rank calculation done in <createDuration(begin1, end1)>");
+    durVolume = createDuration(begin1, end1);
+    println("Volume rank calculation done in <durVolume>");
 
     // Metric 2: Unit Size rank
     datetime begin2 = now();
-    metrics += ("unitSize" : unitSizeRank(testProjectLocation));
+    metrics["unitSize"] = unitSizeRank(testProjectLocation);
     datetime end2 = now();
     println("Unit size rank: <metrics["unitSize"]>");
-    println("Unit Size rank calculation done in <createDuration(begin2, end2)>");
+    durUnitSize = createDuration(begin2, end2);
+    println("Unit Size rank calculation done in <durUnitSize>");
 
     // Metric 3: Unit Complexity rank
     datetime begin3 = now();
-    metrics += ("unitComplexity" : complexityRank(testProjectLocation));
+    metrics["unitComplexity"] = complexityRank(testProjectLocation);
     datetime end3 = now();
     println("Unit complexity rank: <metrics["unitComplexity"]>");
-    println("Unit Compexity rank calculation done in <createDuration(begin3, end3)>");
+    durUnitComplexity = createDuration(begin3, end3);
+    println("Unit Compexity rank calculation done in <durUnitComplexity>");
 
 
     // Metric 4: Duplication rank
     datetime begin4 = now();
-    metrics += ("duplication" : duplicationRank(testProjectLocation));
+    metrics["duplication"] = duplicationRank(testProjectLocation);
     datetime end4 = now();
     println("Duplication rank: <metrics["duplication"]>");
-    println("Duplication rank calculation done in <createDuration(begin4, end4)>");
+    durDuplication = createDuration(begin4, end4);
+    println("Duplication rank calculation done in <durDuplication>");
 
-    metrics = ( "volume" : 1, "unitSize" : 3, "unitComplexity" : 1, "duplication" : 5);
     /**
     * Score 1: Analysability
     * Analysability depends on the total volume of a project, the unit size of the methods of the project,
     * and the degree of duplication.
     **/
-    scores += ("analysability" : calculate_analysability(metrics));
+    scores["analysability"] = calculate_analysability(metrics);
 
     /**
     * Score 2: Changeability
     * Changeability depends on the cyclomatic unit complexity of a program, and the degree of duplication in
     * the source code.
     **/
-    scores += ("changeability" : calculate_changeability(metrics));
+    scores["changeability"] = calculate_changeability(metrics);
 
     /**
     * Score 3: Testability
@@ -82,8 +86,9 @@ void main() {
     scores["testability"] = calculate_testability(metrics);
 
     // Final score: Maintainability
-    scores += ("maintainability" : calculate_maintainability(scores));
+    scores ["maintainability"] = calculate_maintainability(scores);
 
+    println("Metrics: <metrics>");
     println("Numerical scores: <scores>");
     
     map[str, str] finalScores = ranking(scores); // Obtain the scores with the (--/++) ranking (see "Maintainability" for function)
@@ -96,5 +101,35 @@ void main() {
     /** 
     * Finally, create a report for the found results.
     **/
-    createReport(metrics + scores);
+    map[str, str] metricsSymbols = ranking(metrics);
+    todayDate = splitDateTime(begin1);
+    totalTime = createDuration(begin1, end4);
+    values = (
+        "_APPLICATION_" : applicationName,
+        "_STARTTIME_" : "<todayDate[1]>",
+        "_DATE_" : "<todayDate[0]>",
+        "_EXECUTIONTIME_" : "<totalTime>",
+        "_OVERALLSCORE_" : "<finalScores["maintainability"]>",
+        //
+        "_VOLUME-NUMERIC_" : "",
+        "_VOLUME-SCORE_" : "<metricsSymbols["volume"]>",
+        "_VOLUME-EXECTIME_" : "<durVolume>",
+        //
+        "_UNITSIZE-NUMERIC_" : "",
+        "_UNITSIZE-SCORE_" : "<metricsSymbols["unitSize"]>",
+        "_UNITSIZE-EXECTIME_" : "<durUnitSize>",
+        //
+        "_COMPLEXITY-NUMERIC_" : "",
+        "_COMPLEXITY-SCORE_" : "<metricsSymbols["unitComplexity"]>",
+        "_COMPLEXITY-EXECTIME_" : "<durUnitComplexity>",
+        //
+        "_DUPLICATION-NUMERIC_" : "",
+        "_DUPLICATION-SCORE_" : "<metricsSymbols["duplication"]>",
+        "_DUPLICATION-EXECTIME_" : "<durDuplication>",
+        //
+        "_ANALYSABILITY-SCORE_" : "<finalScores["analysability"]>",
+        "_CHANGEABILITY-SCORE_" : "<finalScores["changeability"]>",
+        "_TESTABILITY-SCORE_" : "<finalScores["testability"]>"
+    );
+    createReport(values);
 }
