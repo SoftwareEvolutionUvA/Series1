@@ -11,16 +11,8 @@ private bool keys_there(map[str, value] m) {
     return true;
 }
 
-int calculate_analysability(map[str, int] metrics) {
-    map[str, real] weights = ();
-    weights["volume"] = 1.0/3.0;
-    weights["unitSize"] = 1.0/3.0;
-    weights["duplication"] = 1.0/3.0;
-    return calculate_analysability(metrics, weights);
-}
-
 int calculate_analysability(map[str, int] metrics, map[str, real] weights) {
-    if (keys_there(metrics) ||keys_there(weights)) return -1;
+    if (!keys_there(metrics) || !keys_there(weights)) return -1;
     
     real final_score = 0.0;
     final_score += weights["volume"] * metrics["volume"];
@@ -28,4 +20,12 @@ int calculate_analysability(map[str, int] metrics, map[str, real] weights) {
     final_score += weights["duplication"] * metrics["duplication"];
 
     return floor(final_score/3.0);
+}
+
+int calculate_analysability(map[str, int] metrics) {
+    map[str, real] weights = ();
+    weights["volume"] = 1.0/3.0;
+    weights["unitSize"] = 1.0/3.0;
+    weights["duplication"] = 1.0/3.0;
+    return calculate_analysability(metrics, weights);
 }
