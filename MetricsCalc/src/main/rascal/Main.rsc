@@ -17,14 +17,15 @@ import Metrics::Duplication;
 
 void main() {
     // load project and generate M3
-    //loc locationTestCode = |project://Series1/test/TestCode|;
-    loc locationTestCode = |project://smallsql0.21_src|;
+    loc locationTestCode = |project://Series1/test/TestCode|;
+    //loc locationTestCode = |project://smallsql0.21_src|;
     //loc locationTestCode = |project://hsqldb-2.3.1|;
     M3 model = createM3FromMavenProject(locationTestCode);
     
     // calculate Volume
     datetime begin = now();
-    // int scoreVolume = scoreLOC(calculateProjectLOC(locationTestCode));
+    int locProject = calculateProjectLOC(locationTestCode);
+    int scoreVolume = scoreLOC(locProject);
     datetime end = now();
     // println("Volume done in <createDuration(begin, end)>");
     // println("Volume Score is <scoreVolume>");
@@ -44,8 +45,9 @@ void main() {
 
     // calculate Duplication
     begin = now();
-    int dupLines = absoluteDuplicateLinesProject(locationTestCode);
+    real dupLines = realtiveDuplicateLinesProject(locationTestCode, locProject);
+    println(dupLines);
     end = now();
     println("Duplication done in <createDuration(begin, end)>");
-    println("Duplication Score is <dupLines>");
+    println("Duplication Score is <scoreDuplicates(dupLines)>");
 }

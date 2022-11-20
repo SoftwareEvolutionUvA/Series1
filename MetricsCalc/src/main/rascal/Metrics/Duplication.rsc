@@ -48,7 +48,7 @@ int duplicateLinesSingleClass(list[tuple[loc, int, str, set[int]]] blocksFile, m
 * with n as minimum nr of lines for a clone. 
 */
 tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] createCloneIndex(loc projectLoc) {
-    map[loc, list[str]] project = getProjectLOC(projectLoc);
+    map[loc, list[str]] project = locsCompilationUnits(projectLoc);
     int blockSize = 6;
     set[loc] files = domain(project);
 
@@ -113,4 +113,17 @@ int absoluteDuplicateLinesProject(loc project) {
 */
 real realtiveDuplicateLinesProject(loc project, int projectLoc) {
     return absoluteDuplicateLinesProject(project) / toReal(projectLoc);
+}
+
+/**
+* Calculate the score for duplication.
+* @param total linesOfCode
+* @return 1-based rank for Volume (1 = --, 5 = ++)
+*/
+int scoreDuplicates(real relativeDuplication) {
+    if (0 <= relativeDuplication && relativeDuplication < 3) return 5;
+    if (3 <= relativeDuplication && relativeDuplication < 5) return 4;
+    if (5 <= relativeDuplication && relativeDuplication < 10) return 3;
+    if (10 <= relativeDuplication && relativeDuplication < 20) return 2;
+    return 1;
 }

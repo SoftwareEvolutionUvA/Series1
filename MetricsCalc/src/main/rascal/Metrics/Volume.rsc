@@ -15,26 +15,12 @@ import util::Math;
 * @return LOC for the project location
 */
 public int calculateProjectLOC(loc projectLoc) {
-    map[loc, list[str]] lines = getProjectLOC(projectLoc);
-    return (0 | it + size(t[1]) | t <- toList(lines));
-}
-
-/**
-* Get the lines from the files from project location given by caller.
-* @param projectLoc location to project location containing files
-* @return map of file-location with its lines for the project
-*/
-map[loc, list[str]] getProjectLOC(loc projectLoc) {
-    map[loc, list[str]] classLines = ();
-    M3 project = createM3FromMavenProject(projectLoc);
-    set[loc] cls = classes(project); // TODO: Compilation units also count! (of comprehension schrijven oid)
-    
-    // Obtain the lines for each class
-    for (c <- cls) {
-        classLines[c] = getLines(c);    
+    map[loc, list[str]] linesOfCode = locsCompilationUnits(projectLoc);
+    int count = 0;
+    for (k <- linesOfCode) {
+        count += size(linesOfCode[k]);
     }
-
-    return classLines;
+    return count;
 }
 
 /**
@@ -71,18 +57,6 @@ int scoreLOC(int linesOfCode) {
     if (246 <= kLinesOfCode && kLinesOfCode < 665) return 3;
     if (665 <= kLinesOfCode && kLinesOfCode < 1310) return 2;
     return 1;
-}
-
-/**
-* Give all lines of a project.
-* All obtained lines from all files of a project are given in
-* a list.
-* @param projectLoc location to project location containing files
-* @return list of all lines of project
-*/
-list[str] getAllLines(loc projectLoc) {
-    lines = getProjectLOC(projectLoc);
-    return ([] | it + t[1] | t <- toList(lines));
 }
 
 /**

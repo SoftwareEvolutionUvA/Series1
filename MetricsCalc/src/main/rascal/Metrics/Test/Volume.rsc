@@ -11,13 +11,6 @@ test bool testCalculateProjectLOC() {
     return linesOfCode == 48;
 }
 
-test bool testGetProjectLOC() {
-    loc locationTestCode = |project://Series1/test/TestCode|;
-    map[loc, list[str]] linesOfCode = getProjectLOC(locationTestCode);
-    return size(linesOfCode) == 48;
-}
-
-
 test bool testGetLines() {
     loc testFile = |project://Series1/MetricsCalc/src/main/rascal/Metrics/Test/testRegex.txt|;
     list[str] lines = getLines(testFile);
@@ -45,13 +38,6 @@ test bool testScoreLOC4() {
 test bool testScoreLOC5() {
     return scoreLOC(1000) == 5;
 }
-
-
-
-//test bool testGetAllLines() {
-    // unclear if used -> not tested yet
-//}
-
 
 test bool testVolumeRank() {
     loc locationTestCode = |project://Series1/test/TestCode|;
