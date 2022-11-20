@@ -113,5 +113,4 @@ int absoluteDuplicateLinesProject(loc project) {
 */
 real realtiveDuplicateLinesProject(loc project, int projectLoc) {
     return absoluteDuplicateLinesProject(project) / toReal(projectLoc);
-    println("Start to go over classes");
 }
