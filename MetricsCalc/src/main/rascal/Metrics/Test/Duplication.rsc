@@ -14,21 +14,21 @@ test bool createCloneIndex() {
 test bool testAbsoluteDuplicateLinesProject() {
     loc locationTestCode = |project://Series1/test/TestCode|;
     int locProject = calculateProjectLOC(locationTestCode);
-    return absoluteDuplicateLinesProject(locationTestCode) == 22;
+    return absoluteDuplicateLines(locationTestCode) == 22;
 }
 
 
-test bool testRealtiveDuplicateLinesProject() {
+test bool testRealtiveDuplicateLines() {
     loc locationTestCode = |project://Series1/test/TestCode|;
     int locProject = calculateProjectLOC(locationTestCode);
-    return realtiveDuplicateLinesProject(locationTestCode, locProject) == (22/48.0) * 100;
+    return relativeDuplicateLines(locationTestCode, locProject) == (22/48.0) * 100;
 }
 
 test bool testScoreDuplicatesTestData() {
     loc locationTestCode = |project://Series1/test/TestCode|;
     int locProject = calculateProjectLOC(locationTestCode);
 
-    return scoreDuplicates(realtiveDuplicateLinesProject(locationTestCode, locProject)) == 1;
+    return scoreDuplicates(relativeDuplicateLines(locationTestCode, locProject)) == 1;
 }
 
 test bool testScoreDuplicates1() {
