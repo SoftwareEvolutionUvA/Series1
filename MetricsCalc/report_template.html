@@ -1,0 +1,166 @@
+<html>
+
+<head>
+    <title>
+        Software Maintainability Report of _APPLICATION_
+    </title>
+    <style type="text/css">
+        .test-result-table {
+            border: 1px solid black;
+            width: 800px;
+        }
+        
+        .test-result-table-header-cell {
+            border-bottom: 1px solid black;
+            background-color: silver;
+        }
+        
+        .test-result-step-command-cell {
+            border-bottom: 1px solid gray;
+        }
+        
+        .test-result-step-description-cell {
+            border-bottom: 1px solid gray;
+        }
+        
+        .test-result-step-result-cell-ok {
+            border-bottom: 1px solid gray;
+            background-color: green;
+        }
+        
+        .test-result-step-result-cell-failure {
+            border-bottom: 1px solid gray;
+            background-color: red;
+        }
+        
+        .test-result-step-result-cell-notperformed {
+            border-bottom: 1px solid gray;
+            background-color: white;
+        }
+        
+        .test-result-describe-cell {
+            background-color: tan;
+            font-style: italic;
+        }
+        
+        .test-cast-status-box-ok {
+            border: 1px solid black;
+            float: left;
+            margin-right: 10px;
+            width: 45px;
+            height: 25px;
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="test-results-header">
+        Software Maintainability Report of _APPLICATION_
+    </h1>
+    <p>Test performed at _STARTTIME_ on the _DATE_.</p>
+    <p>Overall execution time: _EXECUTIONTIME_.</p>
+    <p>Overall maintainability score: _OVERALLSCORE_.</p>
+    <table class="test-result-table" cellspacing="0">
+        <thead>
+            <tr>
+                <td class="test-result-table-header-cell">
+                </td>
+                <td class="test-result-table-header-cell">
+                    Unit
+                </td>
+                <td class="test-result-table-header-cell">
+                    Numeric Value
+                </td>
+                <td class="test-result-table-header-cell">
+                    Score
+                </td>
+                <td class="test-result-table-header-cell">
+                    Execution Time
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="test-result-step-row test-result-step-row-altone">
+                <td class="test-result-step-command-cell">Volume</td>
+                <td class="test-result-step-command-cell">Lines Of Code (LOC)</td>
+                <td class="test-result-step-command-cell">_VOLUME-NUMERIC_</td>
+                <td class="test-result-step-command-cell">_VOLUME-SCORE_</td>
+                <td class="test-result-step-command-cell">_VOLUME-EXECTIME_</td>
+            </tr>
+            <tr class="test-result-step-row test-result-step-row-altone">
+                <td class="test-result-step-command-cell">Unit Size</td>
+                <td class="test-result-step-command-cell">(binned) Lines Of Code (LOC)</td>
+                <td class="test-result-step-command-cell">_UNITSIZE-NUMERIC_</td>
+                <td class="test-result-step-command-cell">_UNITSIZE-SCORE_</td>
+                <td class="test-result-step-command-cell">_UNITSIZE-EXECTIME_</td>
+            </tr>
+            <tr class="test-result-step-row test-result-step-row-altone">
+                <td class="test-result-step-command-cell">Unit Complexity</td>
+                <td class="test-result-step-command-cell">(binned) Lines Of Code (LOC)</td>
+                <td class="test-result-step-command-cell">_COMPLEXITY-NUMERIC_</td>
+                <td class="test-result-step-command-cell">_COMPLEXITY-SCORE_</td>
+                <td class="test-result-step-command-cell">_COMPLEXITY-EXECTIME_</td>
+            </tr>
+            <tr class="test-result-step-row test-result-step-row-altone">
+                <td class="test-result-step-command-cell">Duplication</td>
+                <td class="test-result-step-command-cell">Lines Of Code (LOC)</td>
+                <td class="test-result-step-command-cell">_DUPLICATION-NUMERIC_</td>
+                <td class="test-result-step-command-cell">_DUPLICATION-SCORE_</td>
+                <td class="test-result-step-command-cell">_DUPLICATION-EXECTIME_</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <table class="test-result-table" cellspacing="0">
+        <thead>
+        <tr>
+            <td class="test-result-table-header-cell">
+            </td>
+            <td class="test-result-table-header-cell">
+                Volume
+            </td>
+            <td class="test-result-table-header-cell">
+                Unit Size
+            </td>
+            <td class="test-result-table-header-cell">
+                Unit Complexity
+            </td>
+            <td class="test-result-table-header-cell">
+                Duplication
+            </td>
+            <td class="test-result-table-header-cell">
+                Score
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="test-result-step-row test-result-step-row-altone">
+            <td class="test-result-step-command-cell">Analysability</td>
+            <td class="test-result-step-command-cell">_VOLUME-SCORE_</td>
+            <td class="test-result-step-command-cell">_UNITSIZE-SCORE_</td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell">_DUPLICATION-SCORE_</td>
+            <td class="test-result-step-command-cell">_ANALYSABILITY-SCORE_</td>
+        </tr>
+        <tr class="test-result-step-row test-result-step-row-altone">
+            <td class="test-result-step-command-cell">Changeability</td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell">_COMPLEXITY-SCORE_</td>
+            <td class="test-result-step-command-cell">_DUPLICATION-SCORE_</td>
+            <td class="test-result-step-command-cell">_CHANGEABILITY-SCORE_</td>
+        </tr>
+        <tr class="test-result-step-row test-result-step-row-altone">
+            <td class="test-result-step-command-cell">Testability</td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell">_UNITSIZE-SCORE_</td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell"></td>
+            <td class="test-result-step-command-cell">_TESTABILITY-SCORE_</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
