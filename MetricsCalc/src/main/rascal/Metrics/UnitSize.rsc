@@ -72,13 +72,3 @@ int score(list[int] linesOfCode, int projectLOC) {
     if (moderateScore > 25.0 || highScore > 0.0 || veryHighScore > 0.0) return 4;
     return 5;
 }
-
-/**
-* Returns the Unit Size ranking of a project.
-* @param projectLoc location to project location containing files
-* @return Unit Size rank of the project
-*/
-int unitSizeRank(loc projectLocation) {
-    return score(calculateLOCofMethods(projectLocation), calculateProjectLOC(projectLocation));
-}
-

@@ -76,7 +76,7 @@ list[tuple[loc, str]] riskCalc(list[Declaration] projectAST) {
     }
 }
 
-list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projectLocation) {
+list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, int projectLoc) {
     list[int] countModerate = [size(getLines(l)) | <l, "moderate risk"> <- methods];
     list[int] countHigh = [size(getLines(l)) | <l, "high risk"> <- methods];
     list[int] countVeryHigh = [size(getLines(l)) | <l, "very high risk"> <- methods];
@@ -85,13 +85,15 @@ list[tuple[str, real]] riskPercentages(list[tuple[loc, str]] methods, loc projec
     int highLOC = isEmpty(countHigh) ? 0 : sum(countHigh);
     int vhighLOC = isEmpty(countVeryHigh) ? 0 : sum(countVeryHigh);
 
-    int projectLoc = calculateProjectLOC(projectLocation);
-
     return [
         <"moderate", (toReal(modLOC) / projectLoc * 100)>,
         <"high", (toReal(highLOC) / projectLoc * 100)>,
         <"very high", (toReal(vhighLOC) / projectLoc * 100)>
         ];
+}
+
+list[tuple[str, real]] riskAbsolute() {
+    
 }
 
 int rankCC(list[tuple[str, real]] riskP) {
@@ -106,12 +108,14 @@ int rankCC(list[tuple[str, real]] riskP) {
     return 5;
 }
 
-// Function to calculate the ranking of Cyclomatic complexity of a Java project. 
-// Returns rank from 1-5 (--/-/o/+/++, respectively)
-int complexityRank(loc projectLocation) {
+list[tuple[str, real]] calculateLOCByRiskGroup(loc projectLocation, int projectLoc) {
     list[Declaration] projectAST = getMethodASTsProject(projectLocation);
     list[tuple[loc, str]] risks = riskCalc(projectAST);
-    list[tuple[str, real]] riskPerc = riskPercentages(risks, projectLocation);
+    return riskPercentages(risks, projectLoc);
+}
 
-    return rankCC(riskPerc); 
+// Function to calculate the ranking of Cyclomatic complexity of a Java project. 
+// Returns rank from 1-5 (--/-/o/+/++, respectively)
+int complexityRank(loc projectLocation, int projectLoc) {
+    return rankCC(calculateLOCByRiskGroup(projectLocation, projectLoc)); 
 }
