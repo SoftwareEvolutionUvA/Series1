@@ -19,24 +19,25 @@ import util::Math;
 * @param index index file with all blocks of code in project. @see createCloneIndex.
 * @return number of duplicate LOC for the given class
 */
-int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, set[int]]] index) {
-    // construct f
-    list[tuple[loc, int, str, set[int]]] f = [<fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, fName == filename];
-
+int duplicateLinesSingleClass(list[tuple[loc, int, str, set[int]]] blocksFile, map[str, list[tuple[loc, int, str, set[int]]]] lookupHash) {
     set[int] duplicates = {};
 
     // define set with indices
     list[set[tuple[loc, int, str, set[int]]]] c = [];
-    for (elem <- f){
-        sameHash = { <fName, statementIdx, hash, info> | <fName, statementIdx, hash, info> <- index, hash == elem[2] };
+    for (elem <- blocksFile){
         // there is a duplicate somewhere
-        if (size(sameHash) > 1) {
+        if (size(lookupHash[elem[2]]) > 1) {
             duplicates += elem[3]; // we assume info to be a set of all indices the block has
         }
     }
 
     return size(duplicates);
 }
+
+// TODO: create data structure that allows hash and fName to be retrieved quickly
+    // idea: have two lookups:
+    // 1. map [hash, list(tuples)]
+    // 2. map [fname, list(tuples)]
 
 /**
 * Function to obtain all the initial 6-line frames of all files of a project.
@@ -46,24 +47,44 @@ int duplicateLinesSingleClass(loc filename, list[tuple[loc, int, str, set[int]]]
 * - Info (range, i.e., line-nrs of the checked frame)
 * with n as minimum nr of lines for a clone. 
 */
-tuple[list[tuple[loc, int, str, set[int]]], set[loc]] createCloneIndex(loc projectLoc) {
+tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] createCloneIndex(loc projectLoc) {
     map[loc, list[str]] project = getProjectLOC(projectLoc);
-    list[tuple[loc, int, str, set[int]]] cloneIndex = [];
-
     int blockSize = 6;
     set[loc] files = domain(project);
+
+    // lookup hash -> ret list
+    map[str, list[tuple[loc, int, str, set[int]]]] lookupHash = ();
+
+    // lookup fname -> ret list
+    map[loc, list[tuple[loc, int, str, set[int]]]] lookupFileName = ();
+
     for (file <- files) {
+        lookupFileName[file] = [];
         list[str] lines = project[file];
+
+        // files with less than "blocksize" LOC will result in negative upper bound in for loop below
+        // this is why we skip them (they also don't fit our definition of duplicate)
+        if (size(lines) < blockSize) {
+            continue;
+        }
 
         for (i <- [0..(size(lines)-blockSize)]) {
             sequence = lines[i..(i+blockSize)];
             hash = md5Hash(sequence);
             info = {idx | idx <- [i.. (i+blockSize)]};
-            cloneIndex += <file, i, hash, info>;
+            tuple[loc, int, str, set[int]] indexTuple = <file, i, hash, info>;
+            lookupFileName[file] += indexTuple;
+            
+            if (hash in lookupHash) {
+                lookupHash[hash] += indexTuple;
+            }
+            else {
+                lookupHash[hash] = [indexTuple];
+            }
         }
     }
 
-    return <cloneIndex, files>;
+    return <lookupHash, lookupFileName, files>;
 }
 
 /**
@@ -72,13 +93,14 @@ tuple[list[tuple[loc, int, str, set[int]]], set[loc]] createCloneIndex(loc proje
 * @return absolute number of duplicate LOC in project.
 */
 int absoluteDuplicateLinesProject(loc project) {
-    tuple[list[tuple[loc, int, str, set[int]]], set[loc]] ret = createCloneIndex(project);
-    list[tuple[loc, int, str, set[int]]] index = ret[0];
-    set[loc] classes = ret[1];
+    tuple[map[str, list[tuple[loc, int, str, set[int]]]], map[loc, list[tuple[loc, int, str, set[int]]]], set[loc]] ret = createCloneIndex(project);
+    map[str, list[tuple[loc, int, str, set[int]]]] lookupHash = ret[0];
+    map[loc, list[tuple[loc, int, str, set[int]]]] lookupFileName = ret[1];
+    set[loc] classes = ret[2];
 
     int totalDuplicatedLines = 0;
     for (c <- classes) {
-        totalDuplicatedLines += duplicateLinesSingleClass(c, index);
+        totalDuplicatedLines += duplicateLinesSingleClass(lookupFileName[c], lookupHash);
     }
     return totalDuplicatedLines;
 }
@@ -91,4 +113,5 @@ int absoluteDuplicateLinesProject(loc project) {
 */
 real realtiveDuplicateLinesProject(loc project, int projectLoc) {
     return absoluteDuplicateLinesProject(project) / toReal(projectLoc);
+    println("Start to go over classes");
 }
