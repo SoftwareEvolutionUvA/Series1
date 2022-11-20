@@ -20,6 +20,7 @@ public class SomeClass {
      * LOC: 3
      * CC: 1 (E = 1, N = 2)
      * Duplication: 0%
+     * RiskEvaluation: 3 
      * @param arr
      */
     public SomeClass(ArrayList<String> arr) {
@@ -32,6 +33,7 @@ public class SomeClass {
      * LOC: 3
      * CC: 1 (E = 1, N = 2)
      * Duplication: 0%
+     * RiskEvaluation: 3
      * @param s word to add
      */
     public void addWord(String s) {
@@ -47,6 +49,7 @@ public class SomeClass {
      * LOC: 8
      * CC: 4 (E = 12, N = 10) - that's a tricky one due to syntax
      * Duplication: 0%
+     * RiskEvaluation: 3
      * @return total length of the words in the list
      */
     public int sanitizer() {
@@ -71,6 +74,7 @@ public class SomeClass {
      * LOC: 13
      * CC: 4 (E = 8, N = 6)
      * Duplication: 11/11 = 100%
+     * RiskEvaluation: 2
      * @param pos 0-based position to replace word from.
      * @param word raw word to replace word at position {pos} with. Will be transformed.
      */
@@ -96,6 +100,7 @@ public class SomeClass {
      * LOC: 15
      * CC: 4 (E = 8, N = 6)
      * Duplication: 11/13 = 84.61%
+     * RiskEvaluation: 2
      * @param pos 0-based position to replace word from.
      * @param word raw word to replace word at position {pos} with. Will be transformed.
      */

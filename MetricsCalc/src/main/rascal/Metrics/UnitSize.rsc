@@ -12,10 +12,12 @@ int riskEvaluation(int linesOfCode) {
     return 0;
 }
 
-int score(list[int] linesOfCode, loc project) {
-    real totalLoc = calculateProjectLOC(project);
-    list[real] relativeLoc = [(toReal(absLoc) / totalLoc) * 100 | absLoc <- linesOfCode];
-    
+list[real] relativeRisks(list[int] linesOfCode, int projectLoc) {
+    return [(toReal(absLoc) / projectLoc) * 100 | absLoc <- linesOfCode];  
+}
+
+int score(list[int] linesOfCode, int projectLoc) {
+    list[real] relativeLoc = relativeRisks(linesOfCode, projectLoc);
     real veryHighScore = relativeLoc[3];
     real highScore = relativeLoc[2];
     real moderateScore = relativeLoc[1];
@@ -34,7 +36,7 @@ list[int] calculateLOCMethods(M3 model) {
     set[loc] methods = methods(model);
 
     for (m <- methods) {
-        int locMethod = size(calculateLOC(m));
+        int locMethod = size(getLines(m));
         int idx = riskEvaluation(locMethod);
         linesOfCode[idx] += locMethod;
     }

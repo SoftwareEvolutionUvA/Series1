@@ -27,18 +27,18 @@ void main() {
     int locProject = calculateProjectLOC(locationTestCode);
     int scoreVolume = scoreLOC(locProject);
     datetime end = now();
-    // println("Volume done in <createDuration(begin, end)>");
-    // println("Volume Score is <scoreVolume>");
+    println("Volume done in <createDuration(begin, end)>");
+    println("Volume Score is <scoreVolume>");
 
     // calculate Complexity per Unit
-    // str scoreComplexity = complexityRank(locationTestCode)[1];
-    // println("Complexity Per Unit Score is <scoreComplexity>");
+    str scoreComplexity = complexityRank(locationTestCode)[1];
+    println("Complexity Per Unit Score is <scoreComplexity>");
 
     // calculate Unit Size
     // begin = now();
     // list[int] locByRiskLevel = calculateLOCMethods(model);
     // // TODO: having 2nd parameter here doesn't make sense. LOC of project can be obtained from first volume call
-    // int scoreUnitSize = score(locByRiskLevel, locationTestCode);
+    // int scoreUnitSize = score(locByRiskLevel, locProject);
     // end = now();
     // println("Unit Size done in <createDuration(begin, end)>");
     // println("Unit Size Score is <scoreUnitSize>");
