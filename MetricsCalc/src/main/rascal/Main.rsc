@@ -11,6 +11,7 @@ import lang::java::m3::Core;
 import lang::java::m3::AST;
 import DateTime;
 import Report;
+import util::Math;
 
 import Metrics::Volume;
 import Metrics::UnitComplexity;
@@ -24,16 +25,17 @@ import Scores::Maintainability;
 
 
 void main() {
-    loc testProjectLocation = |project://Series1/test/TestCode|;
+    //loc testProjectLocation = |project://Series1/test/TestCode|;
     str applicationName = "TestCode";
-    //loc testProjectLocation = |project://smallsql0.21_src|;
+    loc testProjectLocation = |project://smallsql0.21_src|;
     //loc testProjectLocation = |project://hsqldb-2.3.1|;
     map[str, int] metrics = ();
     map[str, int] scores = ();
 
     // Metric 1: Volume rank
     datetime begin1 = now();
-    metrics["volume"] = volumeRank(testProjectLocation);
+    int absoluteLOC = calculateProjectLOC(testProjectLocation);
+    metrics["volume"] = scoreLOC(absoluteLOC);
     datetime end1 = now();
     println("Volume rank: <metrics["volume"]>");
     durVolume = createDuration(begin1, end1);
@@ -41,7 +43,8 @@ void main() {
 
     // Metric 2: Unit Size rank
     datetime begin2 = now();
-    metrics["unitSize"] = unitSizeRank(testProjectLocation);
+    list[int] locRiskCategory = calculateLOCofMethods(testProjectLocation);
+    metrics["unitSize"] = score(locRiskCategory, absoluteLOC);
     datetime end2 = now();
     println("Unit size rank: <metrics["unitSize"]>");
     durUnitSize = createDuration(begin2, end2);
@@ -49,7 +52,8 @@ void main() {
 
     // Metric 3: Unit Complexity rank
     datetime begin3 = now();
-    metrics["unitComplexity"] = complexityRank(testProjectLocation);
+    list[tuple[str, real]] grps = calculateLOCByRiskGroup(testProjectLocation, absoluteLOC);
+    metrics["unitComplexity"] = rankCC(grps);
     datetime end3 = now();
     println("Unit complexity rank: <metrics["unitComplexity"]>");
     durUnitComplexity = createDuration(begin3, end3);
@@ -58,7 +62,9 @@ void main() {
 
     // Metric 4: Duplication rank
     datetime begin4 = now();
-    metrics["duplication"] = duplicationRank(testProjectLocation);
+    int absDuplicateLines = absoluteDuplicateLines(testProjectLocation);
+    real relDuplicateLines = absDuplicateLines / toReal(absoluteLOC) * 100;
+    metrics["duplication"] = scoreDuplicates(relDuplicateLines);
     datetime end4 = now();
     println("Duplication rank: <metrics["duplication"]>");
     durDuplication = createDuration(begin4, end4);
@@ -111,19 +117,19 @@ void main() {
         "_EXECUTIONTIME_" : "<totalTime>",
         "_OVERALLSCORE_" : "<finalScores["maintainability"]>",
         //
-        "_VOLUME-NUMERIC_" : "",
+        "_VOLUME-NUMERIC_" : "<absoluteLOC>",
         "_VOLUME-SCORE_" : "<metricsSymbols["volume"]>",
         "_VOLUME-EXECTIME_" : "<durVolume>",
         //
-        "_UNITSIZE-NUMERIC_" : "",
+        "_UNITSIZE-NUMERIC_" : "<locRiskCategory>",
         "_UNITSIZE-SCORE_" : "<metricsSymbols["unitSize"]>",
         "_UNITSIZE-EXECTIME_" : "<durUnitSize>",
         //
-        "_COMPLEXITY-NUMERIC_" : "",
+        "_COMPLEXITY-NUMERIC_" : "<grps>",
         "_COMPLEXITY-SCORE_" : "<metricsSymbols["unitComplexity"]>",
         "_COMPLEXITY-EXECTIME_" : "<durUnitComplexity>",
         //
-        "_DUPLICATION-NUMERIC_" : "",
+        "_DUPLICATION-NUMERIC_" : "<absDuplicateLines>",
         "_DUPLICATION-SCORE_" : "<metricsSymbols["duplication"]>",
         "_DUPLICATION-EXECTIME_" : "<durDuplication>",
         //
